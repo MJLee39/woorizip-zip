@@ -49,6 +49,13 @@ public class ZipUpdateDTO {
 
     private String showYes;
 
+    private int room;
+
+    private int toilet;
+
+    private float maintenanceFee;
+
+
 
 //    public static ZipUpdateDTO fromEntity(Zip zip) {
 //        ZipUpdateDTO zipUpdateDTO = new ZipUpdateDTO();

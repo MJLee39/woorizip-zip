@@ -49,12 +49,31 @@ public class ZipDTO {
 
     private String note;
 
+    private int room;
+
+    private int toilet;
+
+    private float maintenanceFee;
+
+
     public void setId(String id) {
         this.id = id;
     }
 
     public void setAttachments(String attachments) {
         this.attachments = attachments;
+    }
+
+    public void setRoom(int room) {
+        this.room = room;
+    }
+
+    public void setToilet(int toilet) {
+        this.toilet = toilet;
+    }
+
+    public void setMaintenanceFee(float maintenanceFee) {
+        this.maintenanceFee = maintenanceFee;
     }
 
     public void setAgentId(String agentId) {
@@ -134,6 +153,9 @@ public class ZipDTO {
         zipDTO.setLocation(zip.getLocation());
         zipDTO.setNote(zip.getNote());
         zipDTO.setShowYes(zip.getShowYes());
+        zipDTO.setRoom(zip.getRoom());
+        zipDTO.setToilet(zip.getToilet());
+        zipDTO.setMaintenanceFee(zip.getMaintenanceFee());
         return zipDTO;
     }
 }

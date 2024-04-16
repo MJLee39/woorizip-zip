@@ -24,6 +24,9 @@ message Zip {
   string location = 15;
   string showYes = 16;
   string note = 17;
+  int32 room = 18;
+  int32 toilet = 19;
+  float maintenanceFee = 20;
 }
 
 service ZipProtoService {
@@ -62,6 +65,9 @@ message ZipIdResponse{
   string location = 15;
   string showYes = 16;
   string note = 17;
+  int32 room = 18;
+  int32 toilet = 19;
+  float maintenanceFee = 20;
 }
 
 //모두 조회
@@ -115,6 +121,9 @@ message ZipInsertRequest{
   string location = 15;
   string showYes = 16;
   string note = 17;
+  int32 room = 18;
+  int32 toilet = 19;
+  float maintenanceFee = 20;
 }
 
 message ZipInsertResponse{
@@ -135,6 +144,9 @@ message ZipInsertResponse{
   string location = 15;
   string showYes = 16;
   string note = 17;
+  int32 room = 18;
+  int32 toilet = 19;
+  float maintenanceFee = 20;
 }
 
 //update 집
@@ -156,6 +168,9 @@ message ZipUpdateRequest{
   string location = 15;
   string showYes = 16;
   string note = 17;
+  int32 room = 18;
+  int32 toilet = 19;
+  float maintenanceFee = 20;
 }
 
 message ZipUpdateResponse{
@@ -176,6 +191,9 @@ message ZipUpdateResponse{
   string location = 15;
   string showYes = 16;
   string note = 17;
+  int32 room = 18;
+  int32 toilet = 19;
+  float maintenanceFee = 20;
 }
 
 //delete 집

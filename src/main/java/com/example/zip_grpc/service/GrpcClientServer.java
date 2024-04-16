@@ -9,15 +9,13 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import com.example.estate_grpc.proto.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import net.devh.boot.grpc.server.service.GrpcService;
 
-import com.example.estate.EstateIdRequest;
-import com.example.estate.EstateInfoResponse;
-import com.example.estate.EstateProtoServiceGrpc;
 import com.example.zip_grpc.ZipAgentIdRequest;
 import com.example.zip_grpc.ZipAgentIdResponse;
 import com.example.zip_grpc.ZipAllRequest;
@@ -91,6 +89,9 @@ public class GrpcClientServer extends ZipProtoServiceGrpc.ZipProtoServiceImplBas
 			.setLocation(zipDTO.getLocation())
 			.setShowYes(zipDTO.getShowYes())
 			.setNote(zipDTO.getNote())
+			.setRoom(zipDTO.getRoom())
+			.setToilet(zipDTO.getToilet())
+			.setMaintenanceFee(zipDTO.getMaintenanceFee())
 			.build();
 	}
 
@@ -122,6 +123,9 @@ public class GrpcClientServer extends ZipProtoServiceGrpc.ZipProtoServiceImplBas
 			.setLocation(zipDTO.getLocation())
 			.setShowYes(zipDTO.getShowYes())
 			.setNote(zipDTO.getNote())
+			.setRoom(zipDTO.getRoom())
+			.setToilet(zipDTO.getToilet())
+			.setMaintenanceFee(zipDTO.getMaintenanceFee())
 			.build();
 
 		//응답
@@ -220,9 +224,38 @@ public class GrpcClientServer extends ZipProtoServiceGrpc.ZipProtoServiceImplBas
 
 	}
 
+	@GrpcClient("auth-server")
+	private EstateProtoServiceGrpc.EstateProtoServiceBlockingStub estateStub;
+
+	public EstateDTO findEstateInfo(final String id){
+		try {
+			EstateInfoResponse response = this.estateStub.findEstateInfo(EstateIdRequest.newBuilder().setEstateId(id).build());
+			EstateDTO estateDTO = new EstateDTO();
+			estateDTO.setBuildingFloor(response.getBuildingFloor());
+			estateDTO.setEstateType(response.getEstateType());
+			estateDTO.setDirection(response.getDirection());
+			estateDTO.setHashtag(response.getHashtag());
+			estateDTO.setLocation(response.getLocation());
+			estateDTO.setM2(response.getM2());
+			estateDTO.setRoom(response.getRoom());
+			estateDTO.setToilet(response.getToilet());
+			estateDTO.setTotalFloor(response.getTotalFloor());
+			estateDTO.setSuccess(true);
+
+			log.info("가져온 estate 정보 : {}", estateDTO.toString());
+
+			return estateDTO;
+		}catch (StatusRuntimeException e){
+			EstateDTO estateDTO = new EstateDTO();
+			estateDTO.setSuccess(false);
+			return estateDTO;
+		}
+	}
+
 	//집 정보 insert
 	@Transactional
 	public void saveZip(ZipInsertRequest request, StreamObserver<ZipInsertResponse> responseStreamObserver){
+
 		ZipDTO zipDTO = new ZipDTO();
 
 		UUID uuid = UUID.randomUUID();
@@ -244,6 +277,48 @@ public class GrpcClientServer extends ZipProtoServiceGrpc.ZipProtoServiceImplBas
 		zipDTO.setLocation(request.getLocation());
 		zipDTO.setShowYes(request.getShowYes());
 		zipDTO.setNote(request.getNote());
+		zipDTO.setRoom(request.getRoom());
+		zipDTO.setToilet(request.getToilet());
+		zipDTO.setMaintenanceFee(request.getMaintenanceFee());
+
+		// 매물에 대한 부동산 정보 가져오기
+		EstateDTO estateDTO = findEstateInfo(zipDTO.getEstateId());
+
+		// 가져온 부동산 정보가 있는 경우에는 설정
+		if (estateDTO.isSuccess()) {
+			log.info("가져온 부동산 정보가 있음: {}",estateDTO.toString());
+			//estate update
+			estateStub.updateEstate(EstateUpdateRequest
+					.newBuilder()
+					.setEstateId(zipDTO.getEstateId())
+					.setLocation(zipDTO.getLocation())
+					.setEstateType(zipDTO.getBuildingType())
+					.setDirection(zipDTO.getDirection())
+					.setTotalFloor(zipDTO.getTotalFloor())
+					.setBuildingFloor(zipDTO.getBuildingFloor())
+					.setRoom(zipDTO.getRoom())
+					.setToilet(zipDTO.getToilet())
+					.setHashtag(zipDTO.getHashtag())
+					.setM2(zipDTO.getM2())
+					.build());
+		} else {
+			// 새로운 부동산 정보 생성
+			log.info("새로운 부동산 정보 생성");
+			//estate save
+			estateStub.saveEstate(EstateSaveRequest
+					.newBuilder()
+					.setEstateId(zipDTO.getEstateId())
+					.setLocation(zipDTO.getLocation())
+					.setEstateType(zipDTO.getBuildingType())
+					.setDirection(zipDTO.getDirection())
+					.setTotalFloor(zipDTO.getTotalFloor())
+					.setBuildingFloor(zipDTO.getBuildingFloor())
+					.setRoom(zipDTO.getRoom())
+					.setToilet(zipDTO.getToilet())
+					.setHashtag(zipDTO.getHashtag())
+					.setM2(zipDTO.getM2())
+					.build());
+		}
 
 		Zip zipEntity = mapper.map(zipDTO, Zip.class);
 
@@ -270,6 +345,9 @@ public class GrpcClientServer extends ZipProtoServiceGrpc.ZipProtoServiceImplBas
 			.setLocation(zipDTO.getLocation())
 			.setShowYes(zipDTO.getShowYes())
 			.setNote(zipDTO.getNote())
+			.setRoom(zipDTO.getRoom())
+			.setToilet(zipDTO.getToilet())
+			.setMaintenanceFee(zipDTO.getMaintenanceFee())
 			.build();
 
 		//응답
@@ -298,6 +376,9 @@ public class GrpcClientServer extends ZipProtoServiceGrpc.ZipProtoServiceImplBas
 		zipUpdateDTO.setLocation(request.getLocation());
 		zipUpdateDTO.setShowYes(request.getShowYes());
 		zipUpdateDTO.setNote(request.getNote());
+		zipUpdateDTO.setRoom(request.getRoom());
+		zipUpdateDTO.setToilet(request.getToilet());
+		zipUpdateDTO.setMaintenanceFee(request.getMaintenanceFee());
 
 		Zip zip = zipRepository.findById(zipUpdateDTO.getId())
 			.orElseThrow(() -> new EntityNotFoundException(zipUpdateDTO.getId() + " 이러한 id의 zip이 없습니다."));
@@ -316,9 +397,12 @@ public class GrpcClientServer extends ZipProtoServiceGrpc.ZipProtoServiceImplBas
 			zip.setFee(zipUpdateDTO.getFee());
 			zip.setCheckedAt(zipUpdateDTO.getCheckedAt());
 			zip.setAgentId(zipUpdateDTO.getAgentId());
-			zip.setEstateId(zip.getEstateId());
-			zip.setNote(zip.getNote());
-			zip.setShowYes(zip.getShowYes());
+			zip.setEstateId(zipUpdateDTO.getEstateId());
+			zip.setNote(zipUpdateDTO.getNote());
+			zip.setShowYes(zipUpdateDTO.getShowYes());
+			zip.setRoom(zipUpdateDTO.getRoom());
+			zip.setToilet(zipUpdateDTO.getToilet());
+			zip.setMaintenanceFee(zipUpdateDTO.getMaintenanceFee());
 		}
 
 		ZipUpdateResponse response = ZipUpdateResponse.newBuilder()
@@ -339,6 +423,9 @@ public class GrpcClientServer extends ZipProtoServiceGrpc.ZipProtoServiceImplBas
 			.setLocation(zip.getLocation())
 			.setShowYes(zip.getShowYes())
 			.setNote(zip.getNote())
+			.setRoom(zip.getRoom())
+			.setToilet(zip.getToilet())
+			.setMaintenanceFee(zip.getMaintenanceFee())
 			.build();
 
 		//응답
@@ -364,7 +451,10 @@ public class GrpcClientServer extends ZipProtoServiceGrpc.ZipProtoServiceImplBas
 			&& zip.getEstateId().equals(zipUpdateDTO.getEstateId())
 			&& zip.getLocation().equals(zipUpdateDTO.getLocation())
 			&& zip.getNote().equals(zipUpdateDTO.getNote())
-			&& zip.getShowYes().equals(zipUpdateDTO.getShowYes());
+			&& zip.getShowYes().equals(zipUpdateDTO.getShowYes())
+			&& zip.getRoom() == zipUpdateDTO.getRoom()
+			&& zip.getToilet() == zipUpdateDTO.getToilet()
+			&& zip.getMaintenanceFee() == zipUpdateDTO.getMaintenanceFee();
 	}
 
 	//집 정보 삭제
@@ -403,6 +493,8 @@ public class GrpcClientServer extends ZipProtoServiceGrpc.ZipProtoServiceImplBas
 		log.info("request.getBuildingType(): ",request.getBuildingType());
 
 		QZip zip = QZip.zip;
+
+		builder.and(zip.showYes.eq("public"));
 
 		if(!request.getLocation().isEmpty()){
 			builder.and(zip.location.eq(request.getLocation()));
@@ -460,31 +552,11 @@ public class GrpcClientServer extends ZipProtoServiceGrpc.ZipProtoServiceImplBas
 		zipDTO.setLocation(zip.getLocation());
 		zipDTO.setNote(zip.getNote());
 		zipDTO.setShowYes(zip.getShowYes());
+		zipDTO.setRoom(zip.getRoom());
+		zipDTO.setToilet(zip.getToilet());
+		zipDTO.setMaintenanceFee(zip.getMaintenanceFee());
 		return zipDTO;
 	}
 
-	@GrpcClient("auth-server")
-	private EstateProtoServiceGrpc.EstateProtoServiceBlockingStub estateStub;
 
-	public EstateDTO findEstateInfo(final String id){
-		try {
-			EstateInfoResponse response = this.estateStub.findEstateInfo(EstateIdRequest.newBuilder().setEstateId(id).build());
-			EstateDTO estateDTO = new EstateDTO();
-			estateDTO.setBuildingFloor(response.getBuildingFloor());
-			estateDTO.setEstateType(response.getEstateType());
-			estateDTO.setDirection(response.getDirection());
-			estateDTO.setHashtag(response.getHashtag());
-			estateDTO.setLocation(response.getLocation());
-			estateDTO.setM2(response.getM2());
-			estateDTO.setRoom(response.getRoom());
-			estateDTO.setToilet(response.getToilet());
-			estateDTO.setTotalFloor(response.getTotalFloor());
-			estateDTO.setSuccess(true);
-			return estateDTO;
-		}catch (StatusRuntimeException e){
-			EstateDTO estateDTO = new EstateDTO();
-			estateDTO.setSuccess(false);
-			return estateDTO;
-		}
-	}
 }

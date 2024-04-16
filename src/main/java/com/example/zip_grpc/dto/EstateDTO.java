@@ -1,14 +1,12 @@
 package com.example.zip_grpc.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Builder
+@ToString
 public class EstateDTO {
 
     private String id;
@@ -29,7 +27,7 @@ public class EstateDTO {
 
     private String hashtag;
 
-    private float m2;
+    private double m2;
 
     private boolean success;
 
@@ -69,7 +67,7 @@ public class EstateDTO {
         this.hashtag = hashtag;
     }
 
-    public void setM2(float m2) {
+    public void setM2(double m2) {
         this.m2 = m2;
     }
 
