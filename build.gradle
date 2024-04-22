@@ -90,6 +90,10 @@ dependencies {
 
     //Thymeleaf
     //implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+    //testcode
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
 }
 
 def querydslDir = "$buildDir/generated/querydsl"
