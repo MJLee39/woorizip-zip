@@ -62,6 +62,8 @@ public class Zip {
 
     private float maintenanceFee;
 
+    private LocalDateTime premium;
+
     public void setRoom(int room) {
         this.room = room;
     }
@@ -143,6 +145,10 @@ public class Zip {
         this.showYes = showYes;
     }
 
+    public void setPremium(LocalDateTime premium) {
+        this.premium = premium;
+    }
+
     // DTO를 Entity로 변환하는 메서드
     public static Zip toEntity(ZipDTO zipDTO) {
         Zip zip = new Zip();
@@ -166,6 +172,7 @@ public class Zip {
         zip.setRoom(zipDTO.getRoom());
         zip.setToilet(zipDTO.getToilet());
         zip.setMaintenanceFee(zipDTO.getMaintenanceFee());
+        zip.setPremium(zipDTO.getPremium());
         return zip;
     }
 }

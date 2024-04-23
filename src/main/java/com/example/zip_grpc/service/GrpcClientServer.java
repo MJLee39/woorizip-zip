@@ -44,6 +44,13 @@ import com.example.zip_grpc.entity.QZip;
 import com.example.zip_grpc.entity.Zip;
 import com.example.zip_grpc.repository.ZipRepository;
 import com.querydsl.core.BooleanBuilder;
+
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.SubQueryExpression;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import io.grpc.StatusRuntimeException;
@@ -92,6 +99,7 @@ public class GrpcClientServer extends ZipProtoServiceGrpc.ZipProtoServiceImplBas
 			.setRoom(zipDTO.getRoom())
 			.setToilet(zipDTO.getToilet())
 			.setMaintenanceFee(zipDTO.getMaintenanceFee())
+			.setPremium(String.valueOf(zipDTO.getPremium()))
 			.build();
 	}
 
@@ -126,6 +134,7 @@ public class GrpcClientServer extends ZipProtoServiceGrpc.ZipProtoServiceImplBas
 			.setRoom(zipDTO.getRoom())
 			.setToilet(zipDTO.getToilet())
 			.setMaintenanceFee(zipDTO.getMaintenanceFee())
+			.setPremium(String.valueOf(zipDTO.getPremium()))
 			.build();
 
 		//응답
@@ -153,8 +162,8 @@ public class GrpcClientServer extends ZipProtoServiceGrpc.ZipProtoServiceImplBas
 
 	//public인 집만 모두 조회
 	public void getZipShowYes(ZipShowYesRequest zipShowYesRequest, StreamObserver<ZipShowYesResponse> zipShowYesResponse){
-
-		List<Zip> zipEntitys = zipRepository.findByShowYes("public");
+		List<Zip> zipEntitys = zipRepository.findMinFeeByEstateId("public");
+		//List<Zip> zipEntitys = zipRepository.findByShowYes("public");
 		List<ZipDTO> zipDTOs = Arrays.asList(mapper.map(zipEntitys, ZipDTO[].class));
 
 		ZipShowYesResponse.Builder response = ZipShowYesResponse.newBuilder();
@@ -171,8 +180,8 @@ public class GrpcClientServer extends ZipProtoServiceGrpc.ZipProtoServiceImplBas
 
 	//private인 집만 모두 조회
 	public void getZipShowNo(ZipShowNoRequest request, StreamObserver<ZipShowNoResponse> zipResponse){
-
-		List<Zip> zipEntitys = zipRepository.findByShowYes("private");
+		List<Zip> zipEntitys = zipRepository.findMinFeeByEstateId("private");
+		//List<Zip> zipEntitys = zipRepository.findByShowYes("private");
 		List<ZipDTO> zipDTOs = Arrays.asList(mapper.map(zipEntitys, ZipDTO[].class));
 
 		ZipShowNoResponse.Builder response = ZipShowNoResponse.newBuilder();
@@ -280,6 +289,7 @@ public class GrpcClientServer extends ZipProtoServiceGrpc.ZipProtoServiceImplBas
 		zipDTO.setRoom(request.getRoom());
 		zipDTO.setToilet(request.getToilet());
 		zipDTO.setMaintenanceFee(request.getMaintenanceFee());
+		zipDTO.setPremium(LocalDateTime.parse(request.getPremium()));
 
 		// 매물에 대한 부동산 정보 가져오기
 		EstateDTO estateDTO = findEstateInfo(zipDTO.getEstateId());
@@ -348,6 +358,7 @@ public class GrpcClientServer extends ZipProtoServiceGrpc.ZipProtoServiceImplBas
 			.setRoom(zipDTO.getRoom())
 			.setToilet(zipDTO.getToilet())
 			.setMaintenanceFee(zipDTO.getMaintenanceFee())
+			.setPremium(String.valueOf(zipDTO.getPremium()))
 			.build();
 
 		//응답
@@ -379,6 +390,7 @@ public class GrpcClientServer extends ZipProtoServiceGrpc.ZipProtoServiceImplBas
 		zipUpdateDTO.setRoom(request.getRoom());
 		zipUpdateDTO.setToilet(request.getToilet());
 		zipUpdateDTO.setMaintenanceFee(request.getMaintenanceFee());
+		zipUpdateDTO.setPremium(LocalDateTime.parse(request.getPremium()));
 
 		Zip zip = zipRepository.findById(zipUpdateDTO.getId())
 			.orElseThrow(() -> new EntityNotFoundException(zipUpdateDTO.getId() + " 이러한 id의 zip이 없습니다."));
@@ -403,6 +415,7 @@ public class GrpcClientServer extends ZipProtoServiceGrpc.ZipProtoServiceImplBas
 			zip.setRoom(zipUpdateDTO.getRoom());
 			zip.setToilet(zipUpdateDTO.getToilet());
 			zip.setMaintenanceFee(zipUpdateDTO.getMaintenanceFee());
+			zip.setPremium(zipUpdateDTO.getPremium());
 		}
 
 		ZipUpdateResponse response = ZipUpdateResponse.newBuilder()
@@ -426,6 +439,7 @@ public class GrpcClientServer extends ZipProtoServiceGrpc.ZipProtoServiceImplBas
 			.setRoom(zip.getRoom())
 			.setToilet(zip.getToilet())
 			.setMaintenanceFee(zip.getMaintenanceFee())
+			.setPremium(String.valueOf(zip.getPremium()))
 			.build();
 
 		//응답
@@ -454,7 +468,8 @@ public class GrpcClientServer extends ZipProtoServiceGrpc.ZipProtoServiceImplBas
 			&& zip.getShowYes().equals(zipUpdateDTO.getShowYes())
 			&& zip.getRoom() == zipUpdateDTO.getRoom()
 			&& zip.getToilet() == zipUpdateDTO.getToilet()
-			&& zip.getMaintenanceFee() == zipUpdateDTO.getMaintenanceFee();
+			&& zip.getMaintenanceFee() == zipUpdateDTO.getMaintenanceFee()
+			&& zip.getPremium() == zipUpdateDTO.getPremium();
 	}
 
 	//집 정보 삭제
@@ -487,26 +502,52 @@ public class GrpcClientServer extends ZipProtoServiceGrpc.ZipProtoServiceImplBas
 	//집 검색
 	public void searchZip(ZipSearchRequest request, StreamObserver<ZipSearchResponse> responseStreamObserver) {
 		BooleanBuilder builder = new BooleanBuilder();
-		log.info("request.getLocation(): ",request.getLocation());
-		log.info("request.getDeposit(): ",request.getDeposit());
-		log.info("request.getFee(): ",request.getFee());
-		log.info("request.getBuildingType(): ",request.getBuildingType());
 
 		QZip zip = QZip.zip;
+		QZip zip2 = new QZip("zip2");
+
+		SubQueryExpression<Tuple> subQuery = JPAExpressions
+				.select(zip2.estateId, zip2.fee.min())
+				.from(zip2)
+				.groupBy(zip2.estateId);
+
+		Predicate inExpression = Expressions.list(
+				zip.estateId,
+				zip.fee
+		).in(subQuery);
+
+		builder.and(inExpression);
 
 		builder.and(zip.showYes.eq("public"));
 
 		if(!request.getLocation().isEmpty()){
-			builder.and(zip.location.eq(request.getLocation()));
+			builder.and(zip.location.like("%" + request.getLocation() + "%"));
 		}
-		if(request.getDeposit() != 0){
-			builder.and(zip.deposit.eq(request.getDeposit()));
+		if(request.getDeposit().isEmpty()){
+			if (request.getDeposit().equals("~500")) {
+				builder.and(zip.deposit.lt(500));
+			} else if (request.getDeposit().equals("500~1000")) {
+				builder.and(zip.deposit.between(500, 1000));
+			} else if (request.getDeposit().equals("1000~2000")) {
+				builder.and(zip.deposit.between(1000, 2000));
+			} else if (request.getDeposit().equals("2000~")) {
+				builder.and(zip.deposit.gt(2000));
+			}
 		}
-		if(request.getFee() != 0){
-			builder.and(zip.fee.eq(request.getFee()));
+		if(request.getFee().isEmpty()){
+			if (request.getFee().equals("~50")) {
+				builder.and(zip.fee.lt(50));
+			} else if (request.getFee().equals("50~75")) {
+				builder.and(zip.fee.between(50, 75));
+			} else if (request.getFee().equals("75~100")) {
+				builder.and(zip.fee.between(75, 100));
+			} else if (request.getFee().equals("100~")) {
+				builder.and(zip.fee.gt(100));
+			}
 		}
 		if(!request.getBuildingType().isEmpty()){
-			builder.and(zip.buildingType.eq(request.getBuildingType()));
+			String[] listBuildingType = request.getBuildingType().split(",");
+			builder.and(zip.buildingType.in(listBuildingType));
 		}
 
 		log.info("builder: {}", builder.toString());
@@ -555,6 +596,7 @@ public class GrpcClientServer extends ZipProtoServiceGrpc.ZipProtoServiceImplBas
 		zipDTO.setRoom(zip.getRoom());
 		zipDTO.setToilet(zip.getToilet());
 		zipDTO.setMaintenanceFee(zip.getMaintenanceFee());
+		zipDTO.setPremium(zip.getPremium());
 		return zipDTO;
 	}
 

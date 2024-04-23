@@ -55,6 +55,12 @@ public class ZipDTO {
 
     private float maintenanceFee;
 
+    private LocalDateTime premium;
+
+    public void setPremium(LocalDateTime premium) {
+        this.premium = premium;
+    }
+
 
     public void setId(String id) {
         this.id = id;

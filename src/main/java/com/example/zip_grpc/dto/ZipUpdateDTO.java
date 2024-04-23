@@ -55,7 +55,7 @@ public class ZipUpdateDTO {
 
     private float maintenanceFee;
 
-
+    private LocalDateTime premium;
 
 //    public static ZipUpdateDTO fromEntity(Zip zip) {
 //        ZipUpdateDTO zipUpdateDTO = new ZipUpdateDTO();
