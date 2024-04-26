@@ -1,0 +1,233 @@
+syntax = "proto3";
+
+package zip;
+
+option java_multiple_files = true;
+option java_package = "com.example.zip_grpc";
+option java_outer_classname = "ZipProto";
+
+message Zip {
+  string id = 1;
+  string attachments = 2;
+  string agentId = 3;
+  string checkedAt = 4;
+  string estateId = 5;
+  string direction = 6;
+  int32 totalFloor = 7;
+  int32 buildingFloor = 8;
+  string buildingType = 9;
+  int32 deposit = 10;
+  int32 fee = 11;
+  string available = 12;
+  string hashtag = 13;
+  float m2 = 14;
+  string location = 15;
+  string showYes = 16;
+  string note = 17;
+  int32 room = 18;
+  int32 toilet = 19;
+  float maintenanceFee = 20;
+  string premium = 21;
+}
+
+service ZipProtoService {
+  rpc GetZipInfo(ZipIdRequest) returns (ZipIdResponse) {}  //zip id로 zip 조회
+  rpc GetZipAll(ZipAllRequest) returns (ZipAllResponse) {} //zip all 조회
+  rpc GetZipShowYes(ZipShowYesRequest) returns (ZipShowYesResponse) {} //showYes가 public인거 모두 조회
+  rpc GetZipShowNo(ZipShowNoRequest) returns (ZipShowNoResponse) {}  //showYes가 private 모두 조회
+  rpc GetZipByAgent(ZipAgentIdRequest) returns (ZipAgentIdResponse) {}  //중개사id로 zip 조회
+  rpc GetZipByEstate(ZipEsateIdRequest) returns (ZipEstateIdResponse) {} //estateid로 zip찾기
+  rpc SaveZip(ZipInsertRequest) returns (ZipInsertResponse) {}   //insert
+  rpc UpdateZip(ZipUpdateRequest) returns (ZipUpdateResponse) {}  //update
+  rpc DeleteZip(ZipDeleteRequest) returns (ZipDeleteResponse) {}  //delete
+  rpc SearchZip(ZipSearchRequest) returns (ZipSearchResponse) {}  //search
+}
+
+//단일 조회
+message ZipIdRequest{
+  string id = 1;
+}
+
+message ZipIdResponse{
+  string id = 1;
+  string attachments = 2;
+  string agentId = 3;
+  string checkedAt = 4;
+  string estateId = 5;
+  string direction = 6;
+  int32 totalFloor = 7;
+  int32 buildingFloor = 8;
+  string buildingType = 9;
+  int32 deposit = 10;
+  int32 fee = 11;
+  string available = 12;
+  string hashtag = 13;
+  float m2 = 14;
+  string location = 15;
+  string showYes = 16;
+  string note = 17;
+  int32 room = 18;
+  int32 toilet = 19;
+  float maintenanceFee = 20;
+  string premium = 21;
+}
+
+//모두 조회
+message ZipAllRequest{
+}
+
+message ZipAllResponse{
+  repeated Zip Zips = 1;
+}
+
+//public 모두 조회
+message ZipShowYesRequest{
+}
+
+message ZipShowYesResponse{
+  repeated Zip Zips = 1;
+}
+
+//private 모두 조회
+message ZipShowNoRequest{
+}
+
+message ZipShowNoResponse{
+  repeated Zip Zips = 1;
+}
+
+//중개사id로 zip 조회
+message ZipAgentIdRequest{
+  string agentId = 1;
+}
+
+message ZipAgentIdResponse{
+ repeated Zip Zips = 1;
+}
+
+//insert 집
+message ZipInsertRequest{
+  string attachments = 2;
+  string agentId = 3;
+  string checkedAt = 4;
+  string estateId = 5;
+  string direction = 6;
+  int32 totalFloor = 7;
+  int32 buildingFloor = 8;
+  string buildingType = 9;
+  int32 deposit = 10;
+  int32 fee = 11;
+  string available = 12;
+  string hashtag = 13;
+  float m2 = 14;
+  string location = 15;
+  string showYes = 16;
+  string note = 17;
+  int32 room = 18;
+  int32 toilet = 19;
+  float maintenanceFee = 20;
+  string premium = 21;
+}
+
+message ZipInsertResponse{
+  string id = 1;
+  string attachments = 2;
+  string agentId = 3;
+  string checkedAt = 4;
+  string estateId = 5;
+  string direction = 6;
+  int32 totalFloor = 7;
+  int32 buildingFloor = 8;
+  string buildingType = 9;
+  int32 deposit = 10;
+  int32 fee = 11;
+  string available = 12;
+  string hashtag = 13;
+  float m2 = 14;
+  string location = 15;
+  string showYes = 16;
+  string note = 17;
+  int32 room = 18;
+  int32 toilet = 19;
+  float maintenanceFee = 20;
+  string premium = 21;
+}
+
+//update 집
+message ZipUpdateRequest{
+  string id = 1;
+  string attachments = 2;
+  string agentId = 3;
+  string checkedAt = 4;
+  string estateId = 5;
+  string direction = 6;
+  int32 totalFloor = 7;
+  int32 buildingFloor = 8;
+  string buildingType = 9;
+  int32 deposit = 10;
+  int32 fee = 11;
+  string available = 12;
+  string hashtag = 13;
+  float m2 = 14;
+  string location = 15;
+  string showYes = 16;
+  string note = 17;
+  int32 room = 18;
+  int32 toilet = 19;
+  float maintenanceFee = 20;
+  string premium = 21;
+}
+
+message ZipUpdateResponse{
+  string id = 1;
+  string attachments = 2;
+  string agentId = 3;
+  string checkedAt = 4;
+  string estateId = 5;
+  string direction = 6;
+  int32 totalFloor = 7;
+  int32 buildingFloor = 8;
+  string buildingType = 9;
+  int32 deposit = 10;
+  int32 fee = 11;
+  string available = 12;
+  string hashtag = 13;
+  float m2 = 14;
+  string location = 15;
+  string showYes = 16;
+  string note = 17;
+  int32 room = 18;
+  int32 toilet = 19;
+  float maintenanceFee = 20;
+  string premium = 21;
+}
+
+//delete 집
+message ZipDeleteRequest{
+  string id = 1;
+}
+
+message ZipDeleteResponse{
+  bool success = 1;
+}
+
+//검색
+message ZipSearchRequest{
+  string location = 1;
+  string deposit = 2;
+  string fee = 3;
+  string buildingType = 4;
+}
+
+message ZipSearchResponse{
+  repeated Zip Zips = 1;
+}
+
+//estateid로 zip찾기
+message ZipEsateIdRequest{
+    string estateId = 1;
+}
+
+message ZipEstateIdResponse{
+  repeated Zip Zips = 1;
+}
