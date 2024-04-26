@@ -233,7 +233,7 @@ public class GrpcClientServer extends ZipProtoServiceGrpc.ZipProtoServiceImplBas
 
 	}
 
-	@GrpcClient("auth-server")
+	@GrpcClient("estate-server")
 	private EstateProtoServiceGrpc.EstateProtoServiceBlockingStub estateStub;
 
 	public EstateDTO findEstateInfo(final String id){
