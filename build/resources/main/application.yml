@@ -28,6 +28,6 @@ grpc:
     address: 0.0.0.0
   client:
     estate-server: # 이건 gRPC 서버 이름 지정 아무거나 가능
-      address: 'static://estate:9092' # static 뒤에 gRPC 서버의 주소와 포트
+      address: 'static://localhost:9092' # static 뒤에 gRPC 서버의 주소와 포트
       negotiation-type: plaintext # 통신 할 때 방식
 

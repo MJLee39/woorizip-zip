@@ -142,3 +142,8 @@ sourceSets {
         }
     }
 }
+
+bootJar {
+    archiveFileName = "app.jar"
+    destinationDirectory = file("./")
+}
