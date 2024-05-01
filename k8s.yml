@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: zip
-          image: mjlee39/woorizip:0.0.1
+          image: mjlee39/woorizip:0.1.1
           ports:
             - containerPort: 9091
 ---
