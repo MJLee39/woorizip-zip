@@ -109,26 +109,26 @@ message ZipAgentIdResponse{
 
 //insert 집
 message ZipInsertRequest{
-  string attachments = 2;
-  string agentId = 3;
-  string checkedAt = 4;
-  string estateId = 5;
-  string direction = 6;
-  int32 totalFloor = 7;
-  int32 buildingFloor = 8;
-  string buildingType = 9;
-  int32 deposit = 10;
-  int32 fee = 11;
-  string available = 12;
-  string hashtag = 13;
-  float m2 = 14;
-  string location = 15;
-  string showYes = 16;
-  string note = 17;
-  int32 room = 18;
-  int32 toilet = 19;
-  float maintenanceFee = 20;
-  string premium = 21;
+  string attachments = 1;
+  string agentId = 2;
+  string checkedAt = 3;
+  string estateId = 4;
+  string direction = 5;
+  int32 totalFloor = 6;
+  int32 buildingFloor = 7;
+  string buildingType = 8;
+  int32 deposit = 9;
+  int32 fee = 10;
+  string available = 11;
+  string hashtag = 12;
+  float m2 = 13;
+  string location = 14;
+  string showYes = 15;
+  string note = 16;
+  int32 room = 17;
+  int32 toilet = 18;
+  float maintenanceFee = 19;
+  string premium = 20;
 }
 
 message ZipInsertResponse{
