@@ -127,6 +127,7 @@ protobuf {
         all()*.plugins {
             grpc {}
         }
+
     }
 }
 
