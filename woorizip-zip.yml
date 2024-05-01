@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: zip
-          image: mjlee39/woorizip:0.1.1
+          image: 211125685751.dkr.ecr.ap-northeast-2.amazonaws.com/woorizip-zip:20240501111859
           ports:
             - containerPort: 9091
 ---
