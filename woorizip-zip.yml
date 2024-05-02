@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: zipapp
-          image: 211125685751.dkr.ecr.ap-northeast-2.amazonaws.com/woorizip-zip:20240502020017
+          image: 211125685751.dkr.ecr.ap-northeast-2.amazonaws.com/woorizip-zip:20240502024447
           ports:
             - containerPort: 9091
 ---
