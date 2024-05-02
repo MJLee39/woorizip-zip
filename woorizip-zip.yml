@@ -31,4 +31,3 @@ spec:
       targetPort: 9091
   type: NodePort
 
-  
