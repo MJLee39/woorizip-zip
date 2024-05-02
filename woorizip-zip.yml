@@ -5,15 +5,15 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: zipapp
+      app: zip
   replicas: 1
   template:
     metadata:
       labels:
-        app: zipapp
+        app: zip
     spec:
       containers:
-        - name: zip
+        - name: zipapp
           image: 211125685751.dkr.ecr.ap-northeast-2.amazonaws.com/woorizip-zip:20240502015403
           ports:
             - containerPort: 9091
@@ -21,10 +21,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: service-zip
+  name: service-helloworld
 spec:
   selector:
-    app: zipapp
+    app: zip
   ports:
     - protocol: TCP
       port: 80
