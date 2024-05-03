@@ -104,6 +104,7 @@ public class GrpcClientServer extends ZipProtoServiceGrpc.ZipProtoServiceImplBas
 	}
 
 	//집 정보 하나 id로 조회
+	@Override
 	public void getZipInfo(ZipIdRequest request, StreamObserver<ZipIdResponse> responseObserver) {
 		String id = request.getId();
 
@@ -142,7 +143,9 @@ public class GrpcClientServer extends ZipProtoServiceGrpc.ZipProtoServiceImplBas
 		responseObserver.onCompleted();
 	}
 
+
 	//집 모두 조회
+	@Override
 	public void getZipAll(ZipAllRequest zipAllRequest, StreamObserver<ZipAllResponse> zipAllResponseStreamObserver){
 
 		List<Zip> zipEntitys = zipRepository.findAll();
@@ -161,6 +164,7 @@ public class GrpcClientServer extends ZipProtoServiceGrpc.ZipProtoServiceImplBas
 	}
 
 	//public인 집만 모두 조회
+	@Override
 	public void getZipShowYes(ZipShowYesRequest zipShowYesRequest, StreamObserver<ZipShowYesResponse> zipShowYesResponse){
 		List<Zip> zipEntitys = zipRepository.findMinFeeByEstateId("public");
 		//List<Zip> zipEntitys = zipRepository.findByShowYes("public");
@@ -179,6 +183,7 @@ public class GrpcClientServer extends ZipProtoServiceGrpc.ZipProtoServiceImplBas
 	}
 
 	//private인 집만 모두 조회
+	@Override
 	public void getZipShowNo(ZipShowNoRequest request, StreamObserver<ZipShowNoResponse> zipResponse){
 		List<Zip> zipEntitys = zipRepository.findMinFeeByEstateId("private");
 		//List<Zip> zipEntitys = zipRepository.findByShowYes("private");
@@ -197,6 +202,7 @@ public class GrpcClientServer extends ZipProtoServiceGrpc.ZipProtoServiceImplBas
 	}
 
 	//중개사 id로 매물 조회
+	@Override
 	public void getZipByAgent(ZipAgentIdRequest request, StreamObserver<ZipAgentIdResponse> zipResponse){
 		String agentID = request.getAgentId();
 		List<Zip> zipEntitys = zipRepository.findByAgentId(agentID);
@@ -215,6 +221,7 @@ public class GrpcClientServer extends ZipProtoServiceGrpc.ZipProtoServiceImplBas
 	}
 
 	//estateid로 zip 조회
+	@Override
 	public void getZipByEstate(ZipEsateIdRequest request, StreamObserver<ZipEstateIdResponse> zipResponse){
 		String estateID = request.getEstateId();
 		List<Zip> zipEntitys = zipRepository.findByEstateId(estateID);
@@ -262,6 +269,7 @@ public class GrpcClientServer extends ZipProtoServiceGrpc.ZipProtoServiceImplBas
 	}
 
 	//집 정보 insert
+	@Override
 	@Transactional
 	public void saveZip(ZipInsertRequest request, StreamObserver<ZipInsertResponse> responseStreamObserver){
 
@@ -367,6 +375,7 @@ public class GrpcClientServer extends ZipProtoServiceGrpc.ZipProtoServiceImplBas
 	}
 
 	//집 정보 update
+	@Override
 	@Transactional
 	public void updateZip(ZipUpdateRequest request, StreamObserver<ZipUpdateResponse> responseStreamObserver){
 		ZipUpdateDTO zipUpdateDTO = new ZipUpdateDTO();
@@ -473,6 +482,7 @@ public class GrpcClientServer extends ZipProtoServiceGrpc.ZipProtoServiceImplBas
 	}
 
 	//집 정보 삭제
+	@Override
 	@Transactional
 	public void deleteZip(ZipDeleteRequest request, StreamObserver<ZipDeleteResponse> responseStreamObserver){
 		String id = request.getId();
@@ -499,7 +509,9 @@ public class GrpcClientServer extends ZipProtoServiceGrpc.ZipProtoServiceImplBas
 		responseStreamObserver.onCompleted();
 	}
 
+
 	//집 검색
+	@Override
 	public void searchZip(ZipSearchRequest request, StreamObserver<ZipSearchResponse> responseStreamObserver) {
 		BooleanBuilder builder = new BooleanBuilder();
 
