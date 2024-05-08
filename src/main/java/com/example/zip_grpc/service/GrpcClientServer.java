@@ -535,7 +535,7 @@ public class GrpcClientServer extends ZipProtoServiceGrpc.ZipProtoServiceImplBas
 		if(!request.getLocation().isEmpty()){
 			builder.and(zip.location.like("%" + request.getLocation() + "%"));
 		}
-		if(request.getDeposit().isEmpty()){
+		if(!request.getDeposit().isEmpty()){
 			if (request.getDeposit().equals("~500")) {
 				builder.and(zip.deposit.lt(500));
 			} else if (request.getDeposit().equals("500~1000")) {
@@ -546,7 +546,7 @@ public class GrpcClientServer extends ZipProtoServiceGrpc.ZipProtoServiceImplBas
 				builder.and(zip.deposit.gt(2000));
 			}
 		}
-		if(request.getFee().isEmpty()){
+		if(!request.getFee().isEmpty()){
 			if (request.getFee().equals("~50")) {
 				builder.and(zip.fee.lt(50));
 			} else if (request.getFee().equals("50~75")) {
