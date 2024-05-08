@@ -1,6 +1,7 @@
 package com.example.zip_grpc.service;
 
 
+import java.security.MessageDigest;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -268,6 +269,27 @@ public class GrpcClientServer extends ZipProtoServiceGrpc.ZipProtoServiceImplBas
 		}
 	}
 
+	//md5 해싱 하는 메소드
+	public String changeToMD5(String str){
+		String  MD5 = "";
+		try {
+			MessageDigest md = MessageDigest.getInstance("MD5");
+			md.update(str.getBytes());
+			byte byteData[] = md.digest();
+			StringBuffer sb = new StringBuffer();
+			for(int i=0; i<byteData.length; i++){
+				sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
+			}
+			MD5 = sb.toString();
+
+		}catch (Exception e){
+			e.printStackTrace();
+			MD5 = null;
+		}
+		return MD5;
+	}
+
+
 	//집 정보 insert
 	@Override
 	@Transactional
@@ -281,7 +303,8 @@ public class GrpcClientServer extends ZipProtoServiceGrpc.ZipProtoServiceImplBas
 		zipDTO.setAttachments(request.getAttachments());
 		zipDTO.setAgentId(request.getAgentId());
 		zipDTO.setCheckedAt(LocalDateTime.parse(request.getCheckedAt()));
-		zipDTO.setEstateId(request.getEstateId());
+
+		zipDTO.setEstateId(changeToMD5(request.getEstateId()));
 		zipDTO.setDirection(request.getDirection());
 		zipDTO.setTotalFloor(request.getTotalFloor());
 		zipDTO.setBuildingFloor(request.getBuildingFloor());
@@ -566,7 +589,7 @@ public class GrpcClientServer extends ZipProtoServiceGrpc.ZipProtoServiceImplBas
 			}
 		}
 
-		log.info("builder: {}", builder.toString());
+		log.info("builder 매개변수!!!!!!!!!!!!!: {}", builder.toString());
 		List<ZipDTO> zipDTOs = queryFactory
 			.select(zip)
 			.from(zip)
@@ -575,7 +598,7 @@ public class GrpcClientServer extends ZipProtoServiceGrpc.ZipProtoServiceImplBas
 			.stream()
 			.map(this::convertToDTO)
 			.collect(Collectors.toList());
-		log.info("list dto: {}", zipDTOs);
+		log.info("list dto!!!!!!!!!: {}", zipDTOs);
 
 		ZipSearchResponse.Builder response = ZipSearchResponse.newBuilder();
 
