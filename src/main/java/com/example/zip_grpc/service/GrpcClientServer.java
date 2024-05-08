@@ -304,7 +304,8 @@ public class GrpcClientServer extends ZipProtoServiceGrpc.ZipProtoServiceImplBas
 		zipDTO.setAgentId(request.getAgentId());
 		zipDTO.setCheckedAt(LocalDateTime.parse(request.getCheckedAt()));
 
-		zipDTO.setEstateId(changeToMD5(request.getEstateId()));
+		zipDTO.setEstateId(request.getEstateId());
+
 		zipDTO.setDirection(request.getDirection());
 		zipDTO.setTotalFloor(request.getTotalFloor());
 		zipDTO.setBuildingFloor(request.getBuildingFloor());
